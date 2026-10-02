@@ -1,0 +1,6 @@
+{
+  "name": "TalentRank AI - Resume Screening & Candidate Ranking",
+  "description": "Production-grade AI recruitment platform with LLM resume parsing, job requirement extraction, explainable semantic ranking, and recruiter analytics.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

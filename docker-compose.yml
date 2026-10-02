@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  # Database Container (PostgreSQL)
+  postgres:
+    image: postgres:16-alpine
+    container_name: talentrank-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: talentrank_user
+      POSTGRES_PASSWORD: talentrank_password
+      POSTGRES_DB: talentrank_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U talentrank_user -d talentrank_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Application Server Container
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: talentrank-app
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - DATABASE_URL=postgresql://talentrank_user:talentrank_password@postgres:5432/talentrank_db
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY:-talentrank-prod-secret-jwt-key}
+
+volumes:
+  pgdata:
